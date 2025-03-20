@@ -1,0 +1,39 @@
+name: 'Node - Tests'
+description: 'This action is used to execute tests.'
+author: Patryk Waluś <patryk.walus@vaimo.com>
+inputs:
+  junit-test-report-path:
+    description: 'Select directories where junit report is located (separated by comma).'
+    required: true
+    type: string
+    default: '*/junit.xml'
+  junit-test-coverage-configuration:
+    description: 'Name and where coverage report file is located (separated by comma). Applicable only if report is not located in coverage/coverage-summary.json folder.'
+    required: false
+    type: string
+runs:
+  using: "composite"
+  steps:
+    - name: Install dependencies
+      shell: bash
+      run: yarn install --frozen-lockfile
+
+    - name: Tests
+      shell: bash
+      run: yarn test:coverage
+
+    - name: Tests Report
+      id: test-report
+      uses: dorny/test-reporter@v2
+      if: success() || failure()
+      with:
+        name: Tests Report
+        path: ${{inputs.junit-test-report-path}}
+        reporter: jest-junit
+
+    - name: Tests Coverage
+      if: success() || failure()
+      uses: MishaKav/jest-coverage-comment@main
+      with:
+        create-new-comment: true
+        multiple-files: ${{ inputs.junit-test-coverage-configuration != '' && inputs.junit-test-coverage-configuration || null }}
