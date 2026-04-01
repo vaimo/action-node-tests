@@ -2,19 +2,27 @@
 
 This action is used to execute tests in Node.js projects.
 
-**Author:** Patryk Waluś (patryk.walus@vaimo.com)
+**Author:** Patryk Walus (patryk.walus@vaimo.com)
 
 ## Supported Versions
 
+- **v2**
+    - Added configurable package manager support (npm, yarn, pnpm).
+    - `package-manager` input is now required.
+    - Upgraded `dorny/test-reporter` from v2 to v3.
+    - Pinned `MishaKav/jest-coverage-comment` to v1 (was @main).
 - **v1**
-    - Test execution action for Node.js projects.
+    - Test execution action for Node.js projects (yarn only).
 
 ## Usage
 
 ```yaml
 - name: Run Tests
-  uses: vaimo/action-node-tests@v1
+  uses: vaimo/action-node-tests@v2
   with:
+    # Package manager to use. Supported values: npm, yarn, pnpm. (Required)
+    package-manager: yarn
+
     # Directories where JUnit report files are located (Optional)
     # If not specified, defaults to */junit.xml
     junit-test-report-path: azure-functions/*/junit.xml,sdk/*/junit.xml
